@@ -32,7 +32,7 @@ To run this Shiny app locally, follow these steps:
 2. **Install required packages**:
     Open your R console or RStudio and run:
     ```R
-    install.packages(c("shiny", "dplyr", "ggplot2", "leaflet", "httr", "jsonlite"))
+    install.packages(c("shiny", "dplyr", "ggplot2", "leaflet", "httr", "jsonlite", "maps", "sf", "DT", "lubridate"))
     ```
 
 3. **Run the app**:
