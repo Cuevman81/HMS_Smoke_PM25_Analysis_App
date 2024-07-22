@@ -26,7 +26,7 @@ To run this Shiny app locally, follow these steps:
 1. **Clone the repository**:
     ```bash
     git clone https://github.com/Cuevman81/HMS_Smoke_PM25_Analysis_App.git
-    cd your-repo-name
+    cd HMS_Smoke_PM25_Analysis_App
     ```
 
 2. **Install required packages**:
