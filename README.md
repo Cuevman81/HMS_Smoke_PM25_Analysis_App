@@ -49,12 +49,13 @@ Once the app is running, users can:
 3. **Analyze Smoke Impact**: Examine the overlay of HMS Smoke data on PM2.5 measurements to understand the correlation between smoke and air quality.
 4. **Export Data**: Download the data for further analysis.
 
+![Example_HMS_PM25_Plot](https://github.com/user-attachments/assets/0ee82602-de67-4a90-836a-b20e5a6bf390)
+
 ## Data Sources
 
 - **EPA Air Quality System**: Provides comprehensive air quality data, including PM2.5 concentrations across the United States.
 - **Hazard Mapping System (HMS) Smoke**: Offers data on smoke plumes detected via satellite, which can be correlated with air quality measurements.
 
-- ![plot](~/Library/CloudStorage/OneDrive-MississippiDepartmentofEnvironmentalQuality/Documents/Github/Smoke/Example_HMS_PM25_Plot.jpg/plot.png)
 
 ## Contributing
 
