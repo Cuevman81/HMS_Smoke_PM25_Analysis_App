@@ -54,6 +54,8 @@ Once the app is running, users can:
 - **EPA Air Quality System**: Provides comprehensive air quality data, including PM2.5 concentrations across the United States.
 - **Hazard Mapping System (HMS) Smoke**: Offers data on smoke plumes detected via satellite, which can be correlated with air quality measurements.
 
+- ![plot](~/Library/CloudStorage/OneDrive-MississippiDepartmentofEnvironmentalQuality/Documents/Github/Smoke/Example_HMS_PM25_Plot.jpg/plot.png)
+
 ## Contributing
 
 We welcome contributions to enhance the functionality and usability of this app. If you would like to contribute, please follow these steps:
