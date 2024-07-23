@@ -58,7 +58,7 @@ Once the app is running, users can:
 
 ## Contributing
 
-We welcome contributions to enhance the functionality and usability of this app. If you would like to contribute, please follow these steps:
+I welcome contributions to enhance the functionality and usability of this app. If you would like to contribute, please follow these steps:
 
 1. Fork the repository.
 2. Create a new branch (`git checkout -b feature-branch`).
