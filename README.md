@@ -75,5 +75,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 For questions or feedback, please contact Rodney Cuevas at [RCuevas@mdeq.ms.gov](mailto:RCuevas@mdeq.ms.gov).
 
 ---
-
-Feel free to modify any part of this README to better suit your project's specifics or add any additional information you think is necessary.
