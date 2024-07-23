@@ -13,9 +13,9 @@ This Shiny R app is designed to pull and visualize PM2.5 air quality data from t
 
 ## Features
 
-- **Data Retrieval**: Automatically pulls the latest PM2.5 data from the EPA's air quality system.
+- **Data Retrieval**: Automatically pulls the latest PM2.5 data from AirNow file products.
 - **HMS Smoke Integration**: Incorporates data from the Hazard Mapping System (HMS) Smoke product to visualize smoke plumes and their impact on air quality.
-- **Interactive Visualizations**: Provides various plots and charts to help users understand air quality trends over time and space.
+- **Interactive Visualizations**: Provides various plots and charts to help users understand air quality trends over time and space with relation to smoke.
 - **User-Friendly Interface**: Designed with ease of use in mind, allowing users to interact with the data without needing advanced technical skills.
 
 ## Installation
