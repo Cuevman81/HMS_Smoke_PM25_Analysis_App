@@ -1,8 +1,7 @@
 # HMS_Smoke_PM25_Analysis_App
 This Shiny R app pulls and visualizes PM2.5 air quality data from the EPA's air quality system and incorporates HMS Smoke data.
 
-
-Sure, here's a detailed README file for your project:
+This is a continuous work in progress as I strive to improve and make the app more useful, especially for agencies needing to perform Exceptional Event Demonstrations for PM2.5 revised NAAQS. Any ideas to enhance the app's functionality are always welcome.
 
 ---
 
