@@ -52,7 +52,7 @@ Once the app is running, users can:
 
 ## Data Sources
 
-- **EPA Air Quality System**: Provides comprehensive air quality data, including PM2.5 concentrations across the United States.
+- **AirNow File Products**: AirNow file products provide various data outputs to members of the broad user community who want access to real-time air quality data and air quality forecasts. Several types of data products and formats are available. File Products can be accessed at files.airnowtech.org. 
 - **Hazard Mapping System (HMS) Smoke**: Offers data on smoke plumes detected via satellite, which can be correlated with air quality measurements.
 
 
