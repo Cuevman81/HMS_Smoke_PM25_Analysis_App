@@ -29,12 +29,12 @@ To run this Shiny app locally, follow these steps:
 To clone this repository and navigate into the directory using R, you can run the following code:
 
 ```r
-1. # Cloning the repository and navigating into it
-repo_url <- "https://github.com/Cuevman81/HMS_Smoke_PM25_Analysis_App.git"
-system(paste("git clone", repo_url))
+1. **Cloning the repository and navigating into it**:
+    repo_url <- "https://github.com/Cuevman81/HMS_Smoke_PM25_Analysis_App.git"
+    system(paste("git clone", repo_url))
 
 # Setting the working directory to the cloned repository
-setwd("HMS_Smoke_PM25_Analysis_App")
+    setwd("HMS_Smoke_PM25_Analysis_App")
 
     ```
 
