@@ -9,7 +9,7 @@ This is a continuous work in progress as I strive to improve and make the app mo
 
 ## Overview
 
-This Shiny R app is designed to pull and visualize PM2.5 air quality data from the EPA's air quality system and incorporate HMS Smoke data. It provides an intuitive interface for users to explore and analyze air quality trends and the impact of smoke from fires.
+This Shiny R app pulls and visualizes PM2.5 air quality data from [AirnowTech](https://files.airnowtech.org/) and incorporates HMS Smoke data. It provides an intuitive interface for users to explore and analyze air quality trends and the impact of smoke from fires.
 
 ## Features
 
