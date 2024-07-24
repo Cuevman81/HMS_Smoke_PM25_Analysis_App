@@ -24,11 +24,14 @@ This Shiny R app is designed to pull and visualize PM2.5 air quality data from t
 
 To run this Shiny app locally, follow these steps:
 
-1. **Clone the repository**:
-    ```bash
-    # Cloning the repository in R Studio and navigating into it
-    repo_url <- "https://github.com/Cuevman81/HMS_Smoke_PM25_Analysis_App.git"
-    system(paste("git clone", repo_url))
+1. ### Cloning the Repository and Navigating into It in R
+
+To clone this repository and navigate into the directory using R, you can run the following code:
+
+```r
+# Cloning the repository and navigating into it
+repo_url <- "https://github.com/Cuevman81/HMS_Smoke_PM25_Analysis_App.git"
+system(paste("git clone", repo_url))
 
 # Setting the working directory to the cloned repository
 setwd("HMS_Smoke_PM25_Analysis_App")
