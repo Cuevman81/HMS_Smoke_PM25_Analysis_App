@@ -26,8 +26,13 @@ To run this Shiny app locally, follow these steps:
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/Cuevman81/HMS_Smoke_PM25_Analysis_App.git
-    cd HMS_Smoke_PM25_Analysis_App
+    # Cloning the repository in R Studio and navigating into it
+    repo_url <- "https://github.com/Cuevman81/HMS_Smoke_PM25_Analysis_App.git"
+    system(paste("git clone", repo_url))
+
+# Setting the working directory to the cloned repository
+setwd("HMS_Smoke_PM25_Analysis_App")
+
     ```
 
 2. **Install required packages**:
