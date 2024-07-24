@@ -39,7 +39,7 @@ To clone this repository and navigate into the directory using R, you can run th
 2. **Install required packages**:
     Open your R console or RStudio and run:
     
-    install.packages(c("shiny", "dplyr", "ggplot2", "leaflet", "httr", "jsonlite", "maps", "sf", "DT", "lubridate"))
+    install.packages(c("shiny", "dplyr", "readr", "ggplot2", "maps", "sf", "DT", "lubridate"))
    
 3. **Run the app**:
 
