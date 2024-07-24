@@ -22,7 +22,7 @@ This Shiny R app is designed to pull and visualize PM2.5 air quality data from t
 
 ## Installation
 
-To run this Shiny app locally, follow these steps:
+To run this Shiny app locally in R Studio, follow these steps:
 
 1. ### Cloning the Repository and Navigating into It in R
 
