@@ -18,7 +18,7 @@ This Shiny R app is designed to pull and visualize PM2.5 air quality data from t
 - **Interactive Visualizations**: Provides various plots and charts to help users understand air quality trends over time and space with relation to smoke.
 - **User-Friendly Interface**: Designed with ease of use in mind, allowing users to interact with the data without needing advanced technical skills.
 
-![Quick Youtube Video of Application](https://www.youtube.com/watch?v=N_yvcZIqZ88)
+[Quick Youtube Video of Application](https://www.youtube.com/watch?v=N_yvcZIqZ88)
 
 ## Installation
 
