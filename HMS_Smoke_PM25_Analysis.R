@@ -6,6 +6,7 @@ library(maps)
 library(ggplot2)
 library(lubridate)
 library(DT)
+library(lwgeom)
 
 # State code to name mapping
 state_code_to_name <- c(
@@ -24,6 +25,91 @@ state_code_to_name <- c(
   "54" = "west virginia", "55" = "wisconsin", "56" = "wyoming"
 )
 
+# Function definitions
+clean_geometry <- function(geom) {
+  tryCatch({
+    if (sf::st_is_longlat(geom)) {
+      geom <- sf::st_transform(geom, 3857)
+    }
+    if (any(sf::st_geometry_type(geom) == "GEOMETRYCOLLECTION")) {
+      geom <- sf::st_collection_extract(geom, "POLYGON")
+    }
+    geom <- sf::st_cast(geom, "MULTIPOLYGON")
+    geom <- sf::st_simplify(geom, dTolerance = 1e-8, preserveTopology = TRUE)
+    geom <- sf::st_make_valid(geom)
+    geom <- geom[sf::st_is_valid(geom),]
+    geom <- sf::st_simplify(geom, dTolerance = 0.01, preserveTopology = TRUE)
+    geom <- sf::st_buffer(geom, dist = 0.01)
+    geom <- sf::st_buffer(geom, dist = -0.01)
+    geom <- sf::st_make_valid(geom)
+    geom <- sf::st_transform(geom, 4326)
+    return(geom)
+  }, error = function(e) {
+    warning(paste("Error in clean_geometry:", e$message))
+    return(sf::st_sfc(sf::st_multipolygon()))
+  })
+}
+
+log_tn_data <- function(data, stage, date, layer) {
+  if ("47" %in% unique(data$State_Code)) {
+    log_dir <- "tn_logs"
+    if (!dir.exists(log_dir)) dir.create(log_dir)
+    log_file <- file.path(log_dir, paste0("tn_log_", stage, "_", date, "_", layer, ".rds"))
+    saveRDS(data, log_file)
+    warning(paste("Logged Tennessee data at", stage, "stage to", log_file))
+  }
+}
+
+read_kml <- function(date, layer, state_sf_transformed, sites_sf) {
+  url <- paste0("https://satepsanone.nesdis.noaa.gov/pub/FIRE/web/HMS/Smoke_Polygons/KML/", 
+                format(date, "%Y/%m/hms_smoke"), format(date, "%Y%m%d"), ".kml")
+  
+  tryCatch({
+    kml_data <- sf::st_read(url, layer = layer, quiet = TRUE)
+    kml_data_cleaned <- clean_geometry(kml_data)
+    log_tn_data(kml_data_cleaned, "cleaned", date, layer)
+    
+    state_sf_transformed_local <- sf::st_transform(state_sf_transformed, sf::st_crs(kml_data_cleaned))
+    state_sf_transformed_local <- clean_geometry(state_sf_transformed_local)
+    
+    state_smoke <- tryCatch({
+      sf::st_intersection(kml_data_cleaned, state_sf_transformed_local)
+    }, error = function(e) {
+      warning(paste("Error in state intersection:", e$message))
+      tryCatch({
+        buffered_state <- sf::st_buffer(state_sf_transformed_local, dist = 0.01)
+        sf::st_intersection(kml_data_cleaned, buffered_state)
+      }, error = function(e2) {
+        warning(paste("Error in buffered state intersection:", e2$message))
+        return(NULL)
+      })
+    })
+    log_tn_data(state_smoke, "state_intersection", date, layer)
+    
+    if (is.null(state_smoke) || nrow(state_smoke) == 0) return(NULL)
+    
+    sites_sf_transformed <- sf::st_transform(sites_sf, sf::st_crs(state_smoke))
+    
+    sites_data <- tryCatch({
+      sf::st_intersection(state_smoke, sites_sf_transformed)
+    }, error = function(e) {
+      warning(paste("Error in sites intersection:", e$message))
+      return(NULL)
+    })
+    log_tn_data(sites_data, "sites_intersection", date, layer)
+    
+    if (is.null(sites_data) || nrow(sites_data) == 0) return(NULL)
+    
+    sites_data$date <- as.Date(date)
+    sites_data$Smoke_Intensity <- layer
+    sites_data
+  }, error = function(e) {
+    warning(paste("Failed to process layer", layer, "for date", date, ":", e$message))
+    return(NULL)
+  })
+}
+
+# UI definition
 ui <- fluidPage(
   titlePanel("PM2.5 and HMS Smoke Data Analysis"),
   
@@ -74,10 +160,12 @@ ui <- fluidPage(
   )
 )
 
+# Server definition
 server <- function(input, output, session) {
   
   pm25Data <- reactiveVal(NULL)
   combinedData <- reactiveVal(NULL)
+  state_sf_transformed <- reactiveVal(NULL)
   
   observeEvent(input$downloadData, {
     withProgress(message = 'Downloading AirNow data', value = 0, {
@@ -198,7 +286,6 @@ server <- function(input, output, session) {
         return(NULL)
       }
       
-      # Get the map data for the selected state(s)
       if (input$stateCode == "ALL") {
         state_names <- unique(state_code_to_name[unique(state_pm25_data$State_Code)])
       } else {
@@ -213,7 +300,8 @@ server <- function(input, output, session) {
       }
       
       us_states <- maps::map("state", fill = TRUE, plot = FALSE)
-      us_states_sf <- st_as_sf(us_states)
+      us_states <- maps::map("state", fill = TRUE, plot = FALSE)
+      us_states_sf <- sf::st_as_sf(us_states)
       state_sf <- us_states_sf[tolower(us_states_sf$ID) %in% state_names, ]
       
       if (nrow(state_sf) == 0) {
@@ -221,44 +309,21 @@ server <- function(input, output, session) {
         return(NULL)
       }
       
-      state_sf_transformed <- st_transform(state_sf, 4326)
+      # Clean the state geometry
+      state_sf <- clean_geometry(state_sf)
+      
+      # Update the reactive value
+      state_sf_transformed(sf::st_transform(state_sf, 4326))
       
       # Convert PM2.5 sites to sf object
       sites_sf <- st_as_sf(state_pm25_data, coords = c("Longitude", "Latitude"), crs = 4326)
-      
-      read_kml <- function(date, layer) {
-        url <- paste0("https://satepsanone.nesdis.noaa.gov/pub/FIRE/web/HMS/Smoke_Polygons/KML/", 
-                      format(date, "%Y/%m/hms_smoke"), format(date, "%Y%m%d"), ".kml")
-        
-        tryCatch({
-          kml_data <- st_read(url, layer = layer, quiet = TRUE)
-          kml_data_valid <- st_make_valid(kml_data)
-          
-          # Intersect with the state boundary first
-          state_smoke <- st_intersection(kml_data_valid, state_sf_transformed)
-          
-          if (nrow(state_smoke) == 0) return(NULL)
-          
-          # Then intersect with the sites
-          sites_data <- st_intersection(state_smoke, sites_sf)
-          
-          if (nrow(sites_data) == 0) return(NULL)
-          
-          sites_data$date <- as.Date(date)
-          sites_data$Smoke_Intensity <- layer
-          sites_data
-        }, error = function(e) {
-          warning(paste("Failed to read layer", layer, "for date", date, ":", e$message))
-          return(NULL)
-        })
-      }
       
       dates <- seq.Date(input$dateRange[1], input$dateRange[2], by = "day")
       layers <- paste0("Smoke (", input$smokeIntensity, ")")
       
       all_data <- lapply(dates, function(date) {
         incProgress(1/length(dates), detail = paste("Processing", date))
-        lapply(layers, function(layer) read_kml(date, layer))
+        lapply(layers, function(layer) read_kml(date, layer, state_sf_transformed(), sites_sf))
       })
       
       all_data <- unlist(all_data, recursive = FALSE)
@@ -278,7 +343,7 @@ server <- function(input, output, session) {
       smoke_intensity_order <- c("Smoke (Heavy)" = 3, "Smoke (Medium)" = 2, "Smoke (Light)" = 1)
       
       combined_data <- combined_data %>%
-        st_drop_geometry() %>%
+        sf::st_drop_geometry() %>%
         mutate(date = as.Date(date)) %>%
         select(AQSID, date, Smoke_Intensity) %>%
         distinct() %>%  # Remove duplicates from smoke data
@@ -385,4 +450,5 @@ server <- function(input, output, session) {
   )
 }
 
+# Run the application
 shinyApp(ui = ui, server = server)
