@@ -50,16 +50,6 @@ clean_geometry <- function(geom) {
   })
 }
 
-log_tn_data <- function(data, stage, date, layer) {
-  if ("47" %in% unique(data$State_Code)) {
-    log_dir <- "tn_logs"
-    if (!dir.exists(log_dir)) dir.create(log_dir)
-    log_file <- file.path(log_dir, paste0("tn_log_", stage, "_", date, "_", layer, ".rds"))
-    saveRDS(data, log_file)
-    warning(paste("Logged Tennessee data at", stage, "stage to", log_file))
-  }
-}
-
 read_kml <- function(date, layer, state_sf_transformed, sites_sf) {
   url <- paste0("https://satepsanone.nesdis.noaa.gov/pub/FIRE/web/HMS/Smoke_Polygons/KML/", 
                 format(date, "%Y/%m/hms_smoke"), format(date, "%Y%m%d"), ".kml")
@@ -67,7 +57,6 @@ read_kml <- function(date, layer, state_sf_transformed, sites_sf) {
   tryCatch({
     kml_data <- sf::st_read(url, layer = layer, quiet = TRUE)
     kml_data_cleaned <- clean_geometry(kml_data)
-    log_tn_data(kml_data_cleaned, "cleaned", date, layer)
     
     state_sf_transformed_local <- sf::st_transform(state_sf_transformed, sf::st_crs(kml_data_cleaned))
     state_sf_transformed_local <- clean_geometry(state_sf_transformed_local)
@@ -84,7 +73,6 @@ read_kml <- function(date, layer, state_sf_transformed, sites_sf) {
         return(NULL)
       })
     })
-    log_tn_data(state_smoke, "state_intersection", date, layer)
     
     if (is.null(state_smoke) || nrow(state_smoke) == 0) return(NULL)
     
@@ -96,7 +84,6 @@ read_kml <- function(date, layer, state_sf_transformed, sites_sf) {
       warning(paste("Error in sites intersection:", e$message))
       return(NULL)
     })
-    log_tn_data(sites_data, "sites_intersection", date, layer)
     
     if (is.null(sites_data) || nrow(sites_data) == 0) return(NULL)
     
